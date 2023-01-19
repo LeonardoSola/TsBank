@@ -7,9 +7,9 @@ import (
 )
 
 type response struct {
-	Data       any               `json:"data,omitempty"`
-	Error      string            `json:"error,omitempty"`
-	Pagination models.Pagination `json:"pagination,omitempty"`
+	Data       any                `json:"data,omitempty"`
+	Error      string             `json:"error,omitempty"`
+	Pagination *models.Pagination `json:"pagination,omitempty"`
 }
 
 func Data(ctx *gin.Context, status int, data interface{}) {
@@ -21,6 +21,6 @@ func Data(ctx *gin.Context, status int, data interface{}) {
 func List(ctx *gin.Context, status int, data interface{}, pagination models.Pagination) {
 	ctx.JSON(status, response{
 		Data:       data,
-		Pagination: pagination,
+		Pagination: &pagination,
 	})
 }
