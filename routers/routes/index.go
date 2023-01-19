@@ -13,5 +13,6 @@ type Route struct {
 func AllRoutes() (routes []Route) {
 	routes = append(routes, AuthRoutes...)
 	routes = append(routes, UserRoutes...)
+	routes = append(routes, TransactionRoutes...)
 	return
 }
