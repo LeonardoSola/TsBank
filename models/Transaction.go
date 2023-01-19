@@ -32,3 +32,8 @@ func (transaction *Transaction) Update() error {
 func (transaction *Transaction) Delete() error {
 	return database.DB.Delete(transaction).Error
 }
+
+func (transaction *Transaction) FindAll(userID uint64, pagination *Pagination) (transactions []Transaction, err error) {
+	err = database.DB.Where("origin_id = ? OR destination_id = ?", userID, userID).Limit(pagination.Limit).Offset(pagination.Offset).Find(&transactions).Error
+	return transactions, err
+}
