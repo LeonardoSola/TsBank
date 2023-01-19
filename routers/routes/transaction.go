@@ -15,7 +15,7 @@ var TransactionRoutes = []Route{
 		AuthRequired: true,
 	},
 	{
-		URI:          "/transaction/:id",
+		URI:          "/transaction/{id}",
 		Method:       http.MethodGet,
 		Handler:      controller.GetByID,
 		AuthRequired: true,
