@@ -13,5 +13,5 @@ WORKDIR /root/
 COPY --from=builder /app/main .
 COPY --from=builder /app/.env .env
 CMD ["./main"]
-LABEL Name=testebackend Version=0.0.1
+LABEL Name=tsbank Version=0.0.1
 EXPOSE 8080
