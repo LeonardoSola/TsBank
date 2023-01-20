@@ -1,10 +1,29 @@
-version: '3.4'
+version: "3.8"
 
 services:
-  testebackend:
-    image: testebackend
+  postgres_db:
+    container_name: core_pg_db
+    image: postgres:13-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgrespw
+      - POSTGRES_DB=postgres
+    volumes:
+      - prod_postgres_data:/var/lib/postgresql/data/
+    restart: always
+
+  server:
+    container_name: tsbank
     build:
       context: .
-      dockerfile: ./Dockerfile
+      dockerfile: Dockerfile
     ports:
-      - 4000:4000
+      - 8080:8080
+    depends_on:
+      - postgres_db
+    links:
+      - postgres_db:postgres_db
+    restart: on-failure
+
+volumes:
+  prod_postgres_data:
