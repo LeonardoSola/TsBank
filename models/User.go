@@ -54,6 +54,10 @@ func (user *User) update() error {
 
 // Metódos de Negócio
 
+func (user *User) CanTransfer() bool {
+	return user.Type == "pf"
+}
+
 // Deposit realiza um depósito na conta do usuário
 func (user *User) Deposit(value int64) error {
 	if value <= 0 {

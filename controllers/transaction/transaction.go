@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"tsbank/models"
 	"tsbank/responses"
+	"tsbank/security"
 
 	"github.com/gin-gonic/gin"
 )
@@ -56,4 +57,52 @@ func GetByID(ctx *gin.Context) {
 
 // Create é responsável por criar uma transação
 func Create(ctx *gin.Context) {
+	user := ctx.MustGet("user").(models.User)
+
+	if user.CanTransfer() {
+		responses.Error(ctx, http.StatusForbidden, "Você não pode realizar transferências")
+		return
+	}
+
+	var input models.Transaction
+
+	if err := ctx.BindJSON(&input); err != nil {
+		responses.Error(ctx, http.StatusBadRequest, "Dados inválidos")
+		return
+	}
+
+	transaction := models.Transaction{
+		OriginID:      user.ID,
+		DestinationID: input.DestinationID,
+		Value:         input.Value,
+	}
+
+	destiny := models.User{}
+	destiny.ID = transaction.DestinationID
+	if err := destiny.FindById(); err != nil {
+		responses.Error(ctx, http.StatusBadRequest, "Conta de destino não encontrada")
+		return
+	}
+
+	if err := user.Withdraw(input.Value); err != nil {
+		responses.Error(ctx, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	transaction.Authorized = security.AuthorizeTransaction()
+
+	if err := transaction.Create(); err != nil {
+		responses.Error(ctx, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	if !transaction.Authorized {
+		responses.Error(ctx, http.StatusServiceUnavailable, "Transação não autorizada")
+		user.Deposit(input.Value)
+		return
+	} else {
+		destiny.Deposit(input.Value)
+	}
+
+	responses.Data(ctx, http.StatusCreated, transaction)
 }

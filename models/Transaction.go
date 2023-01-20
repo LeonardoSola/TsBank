@@ -9,9 +9,9 @@ type Transaction struct {
 	ID            uint64    `gorm:"primary_key;auto_increment" json:"id"`
 	Value         int64     `json:"value" gorm:"not null"`
 	OriginID      uint64    `json:"origin_id" gorm:"foreignKey:OriginID;not null"`
-	Origin        *User     `json:"origin" gorm:"foreignKey:OriginID;<-:false"`
+	Origin        *User     `json:"origin,omitempty" gorm:"foreignKey:OriginID;<-:false"`
 	DestinationID uint64    `json:"destination_id" gorm:"foreignKey:DestinationID;not null"`
-	Destination   *User     `json:"destination" gorm:"foreignKey:DestinationID;<-:false"`
+	Destination   *User     `json:"destination,omitempty" gorm:"foreignKey:DestinationID;<-:false"`
 	Authorized    bool      `json:"authorized" gorm:"not null;default:false"`
 	CreatedAt     time.Time `json:"created_at" gorm:"not null;default:now()"`
 	UpdatedAt     time.Time `json:"updated_at" gorm:"not null;default:now()"`
