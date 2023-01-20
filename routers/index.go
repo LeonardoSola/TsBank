@@ -12,12 +12,13 @@ import (
 func RegisterRoutes(route *gin.Engine) {
 	AllRoutes := routes.AllRoutes()
 
+	api := route.Group("/api")
 	//Add All route
 	for _, r := range AllRoutes {
 		if r.AuthRequired {
-			route.Handle(r.Method, r.URI, middleware.Authenticate(), r.Handler)
+			api.Handle(r.Method, r.URI, middleware.Authenticate(), r.Handler)
 		} else {
-			route.Handle(r.Method, r.URI, r.Handler)
+			api.Handle(r.Method, r.URI, r.Handler)
 		}
 	}
 
